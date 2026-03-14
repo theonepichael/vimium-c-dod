@@ -5280,8 +5280,8 @@
     },
     "node_modules/source-map-support": {
       "version": "0.5.20",
-      "resolved": "https://registry.nlark.com/source-map-support/download/source-map-support-0.5.20.tgz",
-      "integrity": "sha1-EhZgifj15ejFaSazd2Mzkt0stsk=",
+      "resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.5.20.tgz",
+      "integrity": "sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu8EZpo+74AqIGVuFVx7Cjwg==",
       "dependencies": {
         "buffer-from": "^1.0.0",
         "source-map": "^0.6.0"

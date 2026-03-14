@@ -44,22 +44,10 @@ VApi!.e = function (cmd, el2): void {
       return frameElement as HTMLIFrameElement | HTMLFrameElement
     }
   }
-  let jsEvalPromise: Promise<void> | undefined
-  const tryEval = (code: string): unknown => {
-    const injector1 = VimiumInjector!
-    if (injector1.eval) { const ret2 = injector1.eval(code); if (ret2 !== code) { return ret2 } }
-    jsEvalPromise = jsEvalPromise || new Promise((resolve): void => {
-      const script = document.createElement("script")
-      script.src = `${location.protocol}//${injector1.host || injector1.id}/lib/simple_eval.js`
-      script.onload = (): void => { script.remove(); resolve() }
-      (document.head as HTMLHeadElement | null || document.documentElement!).appendChild(script)
-    })
-    const ret = jsEvalPromise.then(() => VApi!.v !== tryEval ? (VApi!.v = VApi!.v.tryEval || VApi!.v)(code) : undefined)
-    type TryResult = ReturnType<VApiTy["v"]["tryEval"]>
-    const composedRet = ret as unknown as TryResult
-    composedRet.result = (ret as Promise<TryResult>).then(i => i && "ok" in i && "result" in i ? i.result : i)
-    composedRet.ok = (ret as Promise<TryResult>).then(i => i && "ok" in i && "result" in i ? i.ok : i) as never
-    return ret
+  // DOD-HARDENED: MAIN-world JS eval injection is disabled; simple_eval.js is never loaded
+  const tryEval = (_code: string): unknown => {
+    Build.NDEBUG || console.warn("Vimium C DoD: JS eval is disabled")
+    return undefined
   }
 
   let i18nMessages: FgRes[kFgReq.i18n] | null = null

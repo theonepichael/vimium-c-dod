@@ -435,31 +435,11 @@ const replaceOrOpenInNewTab = <Reuse extends Exclude<ReuseType, ReuseType.curren
   })
 }
 
-export const openJSUrl = (url: string, options: Req.FallbackOptions, onBrowserFail?: (() => void) | null
-    , reuse?: ReuseType): void => {
-  if ((<RegExpOne> /^(void|\(void\))? ?(0|\(0\))?;?$/).test(url.slice(11).trim())) { runNextCmdBy(1, options); return }
-  if (!onBrowserFail && cPort) {
-    reuse === ReuseType.current && set_cPort(getCurFrames_()?.top_ || cPort)
-    if (safePost(cPort, { N: kBgReq.eval, u: url, f: parseFallbackOptions(options)})) { return }
-    if (reuse !== ReuseType.Default) { runNextCmdBy(0, options); return }
-    set_cPort(null as never)
-  }
-  const callback1 = (opt?: object | -1): void => {
-    if (opt !== -1 && !runtimeError_()) { runNextOnTabLoaded(options, null); return; }
-    const code = BgUtils_.DecodeURLPart_(url.slice(11))
-    void (Build.MV3 ? Promise.resolve(/* todo: */) : Q_(Tabs_.executeScript, { code })).then((result): void => {
-      result === undefined && onBrowserFail && onBrowserFail()
-      runNextIf(!!result, options, null)
-    })
-    return runtimeError_()
-  }
-  // e.g.: use Chrome omnibox at once on starting
-  if (OnChrome && Build.MinCVer < BrowserVer.Min$Tabs$$Update$DoesNotAcceptJavaScriptURLs &&
-      CurCVer_ < BrowserVer.Min$Tabs$$Update$DoesNotAcceptJavaScriptURLs) {
-    tabsUpdate({ url }, callback1)
-  } else {
-    callback1(-1)
-  }
+// DOD-HARDENED: javascript: URL execution is disabled
+export const openJSUrl = (_url: string, options: Req.FallbackOptions, _onBrowserFail?: (() => void) | null
+    , _reuse?: ReuseType): void => {
+  Build.NDEBUG || console.warn("Vimium C DoD: javascript: URL execution is disabled")
+  runNextCmdBy(0, options)
 }
 
 export const openShowPage = (url: string, reuse: ReuseType, options: KnownOptions<C.openUrl>

@@ -1799,6 +1799,11 @@ VUtils_ = {
       ? <T extends object> (obj: T) => ("__proto__" in obj && ((obj as any).__proto__ = null), obj as T & SafeObject)
       : <T extends object> (opt: T): T & SafeObject => Object.setPrototypeOf(opt, null)
     ) as <T extends object> (opt: T) => T & SafeObject,
+  // DOD-HARDENED: escape HTML special chars before inserting browser-origin data into innerHTML
+  escapeHtml_ (str: string): string {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+              .replace(/"/g, "&quot;").replace(/'/g, "&#39;")
+  },
   makeListRenderer_ (this: void, template: string): Render {
     const a = template.trim().replace(<RegExpG> /\s{2,}/g, " ").replace(<RegExpG> /> /g, ">").split(/\{\{(\w+)}}/g)
         .map(function (this: string[], placeholder, index) {
@@ -1817,7 +1822,7 @@ VUtils_ = {
         for (j = 0; j < len; j += 2) {
           html += a[j].n;
           const { i: id, n: propName } = a[j + 1]
-          html += id === 1 ? val[propName as keyof SuggestionE] || ""
+          html += id === 1 ? VUtils_.escapeHtml_((val[propName as keyof SuggestionE] || "") + "")
               : id === 2 ? Vomnibar_.getTypeIcon_(val)
               : id === 3 ? altChars !== null
                 ? index < altChars.length ? altChars[index]

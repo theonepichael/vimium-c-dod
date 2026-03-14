@@ -185,7 +185,8 @@ let optionsInit1_ = function (): void {
   })(permissionEls);
   if (OnEdge) {
     nextTick_((tipForNoShadow): void => {
-      tipForNoShadow.innerHTML = '(On Edge, may need "<kbd>#VimiumUI</kbd>" as prefix if no Shadow DOM)';
+      // DOD-HARDENED: replaced innerHTML with safe DOM construction
+      tipForNoShadow.textContent = '(On Edge, may need "#VimiumUI" as prefix if no Shadow DOM)';
     }, $("#tipForNoShadow"));
   }
 

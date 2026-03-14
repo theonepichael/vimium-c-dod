@@ -46,25 +46,13 @@ var VApi: VApiTy | undefined, VimiumInjector: VimiumInjectorTy | undefined | nul
   }
   function onLastLoad(): void {
     for (let i = scripts.length; 0 <= --i; ) { scripts[i].remove(); }
+    // DOD-HARDENED: simple_eval.js injection disabled
     VApi && (VApi.$r = (event: InjectorTask) => {
       event === InjectorTask.extInited &&
       document.dispatchEvent(new CustomEvent(GlobalConsts.kLoadEvent))
-    }, VApi.v = function tryEval(code: string): unknown {
-      jsEvalPromise = jsEvalPromise || new Promise((resolve): void => {
-        const script = document.createElement("script")
-        script.src = `/lib/simple_eval.js`
-        script.onload = (): void => { script.remove(); resolve() }
-        document.head!.appendChild(script)
-      })
-      const r = jsEvalPromise.then(() => VApi!.v !== tryEval ? (VApi!.v = VApi!.v.tryEval || VApi!.v)(code) : undefined)
-      if (!Build.NDEBUG) {
-        type TryResult = ReturnType<VApiTy["v"]["tryEval"]>
-        const composedRet = r as unknown as TryResult
-        composedRet.result = (r as Promise<TryResult>).then(i => i && "ok" in i && "result" in i ? i.result : i)
-        composedRet.ok = (r as Promise<TryResult>).then(i => i && "ok" in i && "result" in i ? i.ok : i) as never
-      }
-      return r
-
+    }, VApi.v = function tryEval(_code: string): unknown {
+      Build.NDEBUG || console.warn("Vimium C DoD: JS eval is disabled")
+      return undefined
     })
     !(Build.BTypes & BrowserType.Edge)
     && (!(Build.BTypes & BrowserType.Chrome) || Build.MinCVer >= BrowserVer.MinUsableScript$type$$module$InExtensions)

@@ -550,26 +550,9 @@ export let getParentVApi = OnFirefox && isAsContent ? (): VApiTy | null | void =
 
 export function set_getParentVApi (_newGetParVApi: () => VApiTy | null | void): void { getParentVApi = _newGetParVApi }
 
-export const evalIfOK = (req: BgReq[kBgReq.eval] | string): boolean => {
-  const url = isTY(req) ? req : req.u
-  if (!isJSUrl(url)) {
-    return false;
-  }
-  let str = url.slice(11).trim();
-  let el: HTMLScriptElement & SafeHTMLElement | undefined
-  if (createRegExp(kTip.voidJS, "").test(str)) { /* empty */ }
-  else if (!isAsContent
-      || !parentNode_unsafe_s(el = runJS_(VTr(Build.MV3 ? kTip.removeEventScript : kTip.removeCurScript), 0)!)) {
-    str = safeCall(decodeURIComponent, str) || str
-    timeout_((): void => {
-      vApi.v(str)
-      isTY(req) || req.f && runFallbackKey(req.f, 0)
-    }, 0)
-  } else {
-    removeEl_s(el)
-    post_({ H: kFgReq.evalJSFallback, u: url })
-  }
-  return true;
+// DOD-HARDENED: javascript: URL execution is disabled
+export const evalIfOK = (_req: BgReq[kBgReq.eval] | string): boolean => {
+  return false;
 }
 
 export const checkHidden = ((cmd?: FgCmdAcrossFrames, options?: OptionsWithForce, count?: number): BOOL => {
